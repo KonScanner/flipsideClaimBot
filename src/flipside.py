@@ -43,7 +43,7 @@ class Flipside(WebDriver):
         self.sleep(seconds=2.5)
         self.driver.refresh()
 
-    def _claim_helper(url):
+    def _claim_helper(self, url):
         self.driver.get("https://www.google.tk")
         self.sleep(2)
         self.driver.get(url)
