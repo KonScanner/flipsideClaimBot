@@ -8,7 +8,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 
 class WebDriver:
-    def __init__(self, headless=False):
+    def __init__(self, headless=True):
         self.driver = webdriver.Chrome(
             ChromeDriverManager().install(), options=Config(headless=headless).options
         )

@@ -4,8 +4,8 @@ import random
 
 
 class Flipside(WebDriver):
-    def __init__(self, email: str, password: str):
-        super().__init__()
+    def __init__(self, email: str, password: str, headless=False):
+        super().__init__(headless=headless)
         self.discord_login(email=email, password=password)
         self.flipside_login()
 
