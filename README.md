@@ -25,10 +25,10 @@ pip3 install -r requirements.txt
 
 ```python
 # Change this
-flipside_claim = Flipside(
-        email=d_email,
-        password=d_password,
-    ).get_claim(url="YOUR_URL")
+drops = [
+        f"{flipside_base_url}/drops/drop_HASH_1251257192",
+        f"{flipside_base_url}/drops/drop_HASH_12512162122"
+    ]
 ```
 
 - Start the bot:
