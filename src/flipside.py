@@ -43,7 +43,7 @@ class Flipside(WebDriver):
         self.sleep(seconds=2.5)
         self.driver.refresh()
 
-    def get_claim(self, url: str):
+    def _claim_helper(url):
         self.driver.get("https://www.google.tk")
         self.sleep(2)
         self.driver.get(url)
@@ -58,3 +58,10 @@ class Flipside(WebDriver):
                 print(f"Successfully Claimed! {url}")
             except Exception:
                 self.refresh()
+
+    def get_claim(self, url: str):
+        self._claim_helper(url)
+
+    def get_claims(self, urls: list):
+        for url in urls:
+            self.get_claim(url)
