@@ -38,6 +38,56 @@ def get_data():
         else None
         for i in lists
     ]
+    claims_status = [
+        i.findAll("p", {"class": "text-sm"})[0].text
+        if len(i.findAll("p", {"class": "text-sm"})) > 0
+        else None
+        for i in lists
+    ]
+    claims = [
+        i.findAll("span", {"class": "font-semibold text-sm text-zinc-400"})[0].text
+        if len(i.findAll("span", {"class": "font-semibold text-sm text-zinc-400"})) > 0
+        else None
+        for i in lists
+    ]
+    date = [
+        i.findAll(
+            "span",
+            {"class": "text-sm text-white font-bold font-inter"},
+        )[0].text
+        if len(
+            i.findAll(
+                "span",
+                {"class": "text-sm text-white font-bold font-inter"},
+            )
+        )
+        > 0
+        else i.findAll(
+            "span",
+            {
+                "class": (
+                    "text-sm text-white font-bold text-transparent bg-clip-text bg-gradient-to-r"
+                    " from-[#03FFFF] via-[#7449F3] to-[#9A0EEF] font-inter"
+                )
+            },
+        )[0].text
+        if len(
+            i.findAll(
+                "span",
+                {
+                    "class": (
+                        "text-sm text-white font-bold text-transparent bg-clip-text"
+                        " bg-gradient-to-r from-[#03FFFF] via-[#7449F3] to-[#9A0EEF] font-inter"
+                    )
+                },
+            )
+        )
+        > 0
+        else None
+        for i in lists
+    ]
+    #
+
     hrefs = [i.findAll("a", href=True) if len(i) > 0 else None for i in lists]
     hrefs_ = []
     for i in hrefs:
@@ -48,11 +98,18 @@ def get_data():
     hrefs = hrefs_
     df = pd.DataFrame(
         {
+            "Date": date,
             "BountyEcosystem": bounty_ecosys,
             "BountyAmount": bounty_amount,
             "Live": live_or_not,
+            "ClaimsStatus": claims_status,
+            "Claims": claims,
             "URL": hrefs,
         }
     )
     df = df[~df.BountyEcosystem.isna()].reset_index(drop=True)
     return df
+
+
+if __name__ == "__main__":
+    df = get_data()
