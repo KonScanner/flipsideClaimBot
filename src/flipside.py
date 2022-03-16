@@ -32,7 +32,7 @@ class Flipside(WebDriver):
         self.driver.get("https://flipsidecrypto.xyz/")
         # Sign with discord
         sign_w_disc_path = '//*[@id="desktop-header"]/div/div/nav/ul/li/form/button'
-        authorize_disc = "/html/body/div[1]/div[2]/div/div/div/div/div[2]/button[2]"
+        authorize_disc = "/html/body/div[1]/div[2]/div/div/div/div/div/div[2]/button[2]"
         self.driver.find_element_by_xpath(xpath=sign_w_disc_path).click()
         self.sleep(seconds=4)
         self.driver.find_element_by_xpath(xpath=authorize_disc).click()
