@@ -1,5 +1,7 @@
 from src.helpers.webdriver_instance import WebDriver
+from src.drops import get_drops
 import time
+import logging
 import random
 
 
@@ -61,7 +63,12 @@ class Flipside(WebDriver):
 
     def get_claim(self, url: str):
         self._claim_helper(url)
+        logging.info(f"{url} successfully claimed!")
 
-    def get_claims(self, urls: list):
+    def get_claims(self, urls: list, strategy: str = "yield"):
+        if urls is None:
+            urls = get_drops(strategy=strategy)
+            print(urls)
         for url in urls:
+            logging.info(f"Claiming {url}...")
             self.get_claim(url)
