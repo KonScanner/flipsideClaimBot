@@ -33,33 +33,39 @@ class Flipside(WebDriver):
     def flipside_login(self):
         self.driver.get("https://flipsidecrypto.xyz/")
         # Sign with discord
-        sign_w_disc_path = '//*[@id="desktop-header"]/div/div/nav/ul/li/form/button'
+
+        sign_w_disc_path = "/html/body/div/header/div[2]/div/div[2]/form/button"
         authorize_disc = "/html/body/div[1]/div[2]/div/div/div/div/div/div[2]/button[2]"
-        self.driver.find_element_by_xpath(xpath=sign_w_disc_path).click()
+        try:
+            self.driver.find_element_by_xpath(xpath=sign_w_disc_path).click()
+            self.sleep(seconds=4)
+        except Exception as e:
+            raise Exception(e)
         self.sleep(seconds=4)
         self.driver.find_element_by_xpath(xpath=authorize_disc).click()
         self.sleep(seconds=2)
         return
 
-    def refresh(self):
-        self.sleep(seconds=2.5)
+    def refresh(self, **kwargs):
+        self.sleep(**kwargs)
         self.driver.refresh()
 
     def _claim_helper(self, url):
         self.driver.get("https://www.google.tk")
-        self.sleep(2)
+        self.sleep(0.125)
         self.driver.get(url)
-        self.sleep(seconds=2)
+        self.sleep(seconds=0.2)
         unclaimed = True
         claim_path = "/html/body/div/div[2]/article/aside/section/div/div[2]/form/button"
         while unclaimed:
             try:
-                self.sleep(seconds=2)
+                self.sleep(seconds=0.5)
                 self.driver.find_element_by_xpath(claim_path).click()
                 unclaimed = False
                 print(f"Successfully Claimed! {url}")
             except Exception:
-                self.refresh()
+                self.refresh(seconds=0.15)
+                self.sleep(seconds=0.15)
 
     def get_claim(self, url: str):
         self._claim_helper(url)
