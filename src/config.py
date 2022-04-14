@@ -21,3 +21,7 @@ class Config:
         self.options.add_argument("--disable-gpu")
         self.options.add_argument("--disable-dev-shm-usage")
         self.options.add_argument("--no-sandbox")
+
+
+class PARAMS:
+    FLIPSIDE_BASE_URL = "https://flipsidecrypto.xyz"
