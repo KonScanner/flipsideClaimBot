@@ -14,13 +14,21 @@ if __name__ == "__main__":
     d_password = os.getenv("DISCORD_PASSWORD")
     d_password2 = os.getenv("DISCORD_PASSWORD2")
     df = get_data()  # To be implemented, for now only for manual use
-    drops = []  # Algorand bounty
+    drops = [
+        "https://flipsidecrypto.xyz/drops/36lD7WKuiNjh8uQkuFcjNo",
+        "https://flipsidecrypto.xyz/drops/2SWykF15HZ28GHzVT7bcbw",
+        "https://flipsidecrypto.xyz/drops/5RSZ48VlsZSfiDedbGpxo5",
+        "https://flipsidecrypto.xyz/drops/1ZnECNE4mGq1FgMOUeWNOM",
+    ]
+    # idx = 0
     # Example
     if len(sys.argv) > 1:
         logging.basicConfig(filename=f"flipside_logs_{sys.argv[1]}.log", level=logging.INFO)
         if len(sys.argv) > 2:
             if re.search("headless", sys.argv[2], re.IGNORECASE):
                 headless = True
+                if len(sys.argv) > 3:
+                    idx = int(sys.argv[3])
         if sys.argv[1] == "1":
             flipside_claim = Flipside(
                 email=d_email, password=d_password, headless=headless

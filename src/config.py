@@ -11,7 +11,7 @@ class Config:
         if headless:
             self.options.headless = headless
         self.options.add_argument(f"user-agent={user_agent}")
-        self.options.add_argument("--window-size=1920,1080")
+        # self.options.add_argument("--window-size=1920,1080")
         self.options.add_argument("--ignore-certificate-errors")
         self.options.add_argument("--allow-running-insecure-content")
         self.options.add_argument("--disable-extensions")
