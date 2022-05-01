@@ -15,10 +15,8 @@ if __name__ == "__main__":
     d_password2 = os.getenv("DISCORD_PASSWORD2")
     df = get_data()  # To be implemented, for now only for manual use
     drops = [
-        "https://flipsidecrypto.xyz/drops/36lD7WKuiNjh8uQkuFcjNo",
-        "https://flipsidecrypto.xyz/drops/2SWykF15HZ28GHzVT7bcbw",
-        "https://flipsidecrypto.xyz/drops/5RSZ48VlsZSfiDedbGpxo5",
-        "https://flipsidecrypto.xyz/drops/1ZnECNE4mGq1FgMOUeWNOM",
+        "https://flipsidecrypto.xyz/drops/6hZVVDF2Ae2WN3s96iTfKG",
+        "https://flipsidecrypto.xyz/drops/6kVQaChymJ1pAtELcLSyla",
     ]
     # idx = 0
     # Example
@@ -32,11 +30,11 @@ if __name__ == "__main__":
         if sys.argv[1] == "1":
             flipside_claim = Flipside(
                 email=d_email, password=d_password, headless=headless
-            ).get_claims(urls=drops, strategy="yield")
+            ).get_claims(urls=drops, strategy="yield", persistent=True)
         elif sys.argv[1] == "2":
             flipside_claim2 = Flipside(
                 email=d_email2, password=d_password2, headless=headless
-            ).get_claims(urls=drops, strategy="first")
+            ).get_claims(urls=drops, strategy="first", persistent=True)
         else:
             raise ValueError("Please choose from 1 or 2")
     else:
