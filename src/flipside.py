@@ -65,6 +65,7 @@ class Flipside(WebDriver):
     def claimable(self, body: list, index: int):
         body_join = " ".join(body)
         if re.search("claim question", body_join, re.IGNORECASE):
+            print("Claimable, due to 'claim question'...")
             return True
         if body[index + 1].lower() == "unlimited":
             claims = np.inf
@@ -73,6 +74,7 @@ class Flipside(WebDriver):
         if claims <= 0:
             return False
         else:
+            print(f"Claimable, due to '{claims}'...")
             return True
 
     def is_claimed(self, body: list) -> bool:
