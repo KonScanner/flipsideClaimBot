@@ -63,12 +63,13 @@ class Flipside(WebDriver):
         return body
 
     def claimable(self, body: list, index: int):
-        if body[index + 2].lower() == "claim question":
+        body_join = " ".join(body)
+        if re.search("claim question", body_join, re.IGNORECASE):
             return True
         if body[index + 1].lower() == "unlimited":
             claims = np.inf
         if body[index + 1][0].lower().isnumeric():
-            claims = int(body[index + 1][0])
+            claims = int(re.search("[0-9]+", body[index + 1], re.IGNORECASE).group(0))
         if claims <= 0:
             return False
         else:
@@ -80,6 +81,15 @@ class Flipside(WebDriver):
             return True
         else:
             return False
+
+    def _get_index_available_claims(self, body: list) -> int:
+        body_join = " ".join(body)
+        if re.search("available", body_join, re.IGNORECASE):
+            return body.index("Available Claims")
+        else:
+            self.refresh(seconds=0.15)
+            body = self.get_body()
+            return self._get_index_available_claims(body=body)
 
     def refresh(self, **kwargs):
         self.sleep(**kwargs)
@@ -99,7 +109,7 @@ class Flipside(WebDriver):
             body = self.get_body()
             if self.is_claimed(body):
                 return self
-            claims_index = body.index("Available Claims")
+            claims_index = self._get_index_available_claims(body=body)
             if self.claimable(body=body, index=claims_index):
                 self.driver.find_element_by_xpath(claim_path).click()
                 unclaimed = False
