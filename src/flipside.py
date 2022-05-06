@@ -79,14 +79,20 @@ class Flipside(WebDriver):
             return True
         if re.search("[1-9]+ /", body_join, re.IGNORECASE):
             return True
+        if re.search("Drops in", body_join, re.IGNORECASE):
+            return self._helper_for_claimable(seconds=0.5)
         if re.search("error", body_join, re.IGNORECASE):
-            self.refresh(seconds=0.15)
-            return self.claimable(body=body)
+            return self._helper_for_claimable(seconds=0.25)
         if re.search("uh oh", body_join, re.IGNORECASE):
-            self.refresh(seconds=0.15)
-            return self.claimable(body=body)
+            return self._helper_for_claimable(seconds=0.25)
         print("Not claimable...")
         return False
+
+    # TODO Rename this here and in `claimable`
+    def _helper_for_claimable(self, **kwargs):
+        self.refresh(**kwargs)
+        body = self.get_body()
+        return self.claimable(body=body)
 
     def is_claimed(self, body: list) -> bool:
         body_join = " ".join(body)
