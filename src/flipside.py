@@ -14,9 +14,14 @@ class Flipside(WebDriver):
         self.discord_login(email=email, password=password)
         self.flipside_login()
 
-    def sleep(self, seconds: int = 0.75) -> None:
+    def sleep(self, seconds: float = 0.75) -> None:
         rand_val = random.random()
         time.sleep(seconds + rand_val)
+
+    def refresh(self, **kwargs):
+        self.sleep(**kwargs)
+        self.driver.refresh()
+        return self
 
     def discord_login(self, email: str, password: str):
         self.driver.get("https://discord.com/login")
@@ -30,11 +35,9 @@ class Flipside(WebDriver):
             '//*[@id="app-mount"]/div[2]/div/div/div/div/form/div/div/div[1]/div[2]/button[2]'
         )
         self.sleep()
-        self.driver.find_element_by_xpath(xpath=login_button_path).click()
-        self.sleep(seconds=2)
-        return self
+        return self._extracted_from_flipside_login_11(login_button_path, 2)
 
-    def flipside_login(self):
+    def flipside_login(self):  # sourcery skip: raise-specific-error
         self.driver.get("https://flipsidecrypto.xyz/")
         # Sign with discord
 
@@ -44,10 +47,14 @@ class Flipside(WebDriver):
             self.driver.find_element_by_xpath(xpath=sign_w_disc_path).click()
             self.sleep(seconds=3)
         except Exception as e:
-            raise Exception(e)
+            raise Exception(e) from e
         self.sleep(seconds=2)
-        self.driver.find_element_by_xpath(xpath=authorize_disc).click()
-        self.sleep(seconds=3)
+        return self._extracted_from_flipside_login_11(authorize_disc, 3)
+
+    # TODO Rename this here and in `discord_login` and `flipside_login`
+    def _extracted_from_flipside_login_11(self, xpath, seconds):
+        self.driver.find_element_by_xpath(xpath=xpath).click()
+        self.sleep(seconds=seconds)
         return self
 
     def capcha(self):
@@ -55,50 +62,45 @@ class Flipside(WebDriver):
         if s.lower() == "y":
             print("Successfully logged in!")
             self.logged_in = True
-        return
+        else:
+            self.driver.quit()
 
     def get_body(self) -> list:
         body = self.driver.find_element_by_xpath("/html/body").text
         body = body.split("\n")
         return body
 
-    def claimable(self, body: list, index: int):
+    def claimable(self, body: list):
         body_join = " ".join(body)
         if re.search("claim question", body_join, re.IGNORECASE):
             print("Claimable, due to 'claim question'...")
             return True
-        if body[index + 1].lower() == "unlimited":
-            claims = np.inf
-        if body[index + 1][0].lower().isnumeric():
-            claims = int(re.search("[0-9]+", body[index + 1], re.IGNORECASE).group(0))
-        if claims <= 0:
-            return False
-        else:
-            print(f"Claimable, due to '{claims}'...")
+        if re.search("unlimited", body_join, re.IGNORECASE):
             return True
+        if re.search("[1-9]+ /", body_join, re.IGNORECASE):
+            return True
+        if re.search("error", body_join, re.IGNORECASE):
+            self.refresh(seconds=0.15)
+            return self.claimable(body=body)
+        if re.search("uh oh", body_join, re.IGNORECASE):
+            self.refresh(seconds=0.15)
+            return self.claimable(body=body)
+        print("Not claimable...")
+        return False
 
     def is_claimed(self, body: list) -> bool:
         body_join = " ".join(body)
-        if re.search("Question Claimed", body_join, re.IGNORECASE):
-            return True
-        else:
-            return False
+        return bool(re.search("Question Claimed", body_join, re.IGNORECASE))
 
     def _get_index_available_claims(self, body: list) -> int:
         body_join = " ".join(body)
         if re.search("available", body_join, re.IGNORECASE):
             return body.index("Available Claims")
-        else:
-            self.refresh(seconds=0.15)
-            body = self.get_body()
-            return self._get_index_available_claims(body=body)
+        self.refresh(seconds=0.15)
+        body = self.get_body()
+        return self._get_index_available_claims(body=body)
 
-    def refresh(self, **kwargs):
-        self.sleep(**kwargs)
-        self.driver.refresh()
-        return self
-
-    def _claim_helper(self, url: str, persistent=False):
+    def _claim_helper(self, url: str, persistent: bool = False):
         self.driver.get("https://www.google.gr")
         self.sleep(0.16)
         self.driver.get(url)
@@ -111,18 +113,20 @@ class Flipside(WebDriver):
             body = self.get_body()
             if self.is_claimed(body):
                 return self
-            claims_index = self._get_index_available_claims(body=body)
-            if self.claimable(body=body, index=claims_index):
+            # claims_index = self._get_index_available_claims(body=body)
+            if self.claimable(body=body):
                 self.driver.find_element_by_xpath(claim_path).click()
-                unclaimed = False
-                self.sleep(seconds=5.2)
-                print(f"Successfully Claimed! {url}")
-            else:
-                if persistent:
-                    self.refresh(seconds=0.15)
-                    self.sleep(seconds=3.15)
-                else:
+                self.sleep(seconds=3.25)
+                body = self.get_body()
+                if self.is_claimed(body):
+                    unclaimed = False
+                    print(f"Successfully Claimed! {url}")
                     return self
+            elif persistent:
+                self.refresh(seconds=0.15)
+                self.sleep(seconds=3.15)
+            else:
+                return self
 
         return self
 
