@@ -105,7 +105,6 @@ class Flipside(WebDriver):
         return self._get_index_available_claims(body=body)
 
     def _claim_helper(self, url: str, persistent: bool = False):
-        self.sleep(20000)
         self.driver.get("https://www.google.gr")
         self.sleep(0.16)
         self.driver.get(url)
