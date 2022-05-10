@@ -35,7 +35,7 @@ class Flipside(WebDriver):
             '//*[@id="app-mount"]/div[2]/div/div/div/div/form/div/div/div[1]/div[2]/button[2]'
         )
         self.sleep()
-        return self._extracted_from_flipside_login_11(login_button_path, 2)
+        return self._login_helper(login_button_path, 2)
 
     def flipside_login(self):  # sourcery skip: raise-specific-error
         self.driver.get("https://flipsidecrypto.xyz/")
@@ -49,10 +49,9 @@ class Flipside(WebDriver):
         except Exception as e:
             raise Exception(e) from e
         self.sleep(seconds=2)
-        return self._extracted_from_flipside_login_11(authorize_disc, 3)
+        return self._login_helper(authorize_disc, 3)
 
-    # TODO Rename this here and in `discord_login` and `flipside_login`
-    def _extracted_from_flipside_login_11(self, xpath, seconds):
+    def _login_helper(self, xpath, seconds):
         self.driver.find_element_by_xpath(xpath=xpath).click()
         self.sleep(seconds=seconds)
         return self
@@ -88,7 +87,6 @@ class Flipside(WebDriver):
         print("Not claimable...")
         return False
 
-    # TODO Rename this here and in `claimable`
     def _helper_for_claimable(self, **kwargs):
         self.refresh(**kwargs)
         body = self.get_body()
@@ -107,6 +105,7 @@ class Flipside(WebDriver):
         return self._get_index_available_claims(body=body)
 
     def _claim_helper(self, url: str, persistent: bool = False):
+        self.sleep(20000)
         self.driver.get("https://www.google.gr")
         self.sleep(0.16)
         self.driver.get(url)
