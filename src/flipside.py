@@ -32,28 +32,30 @@ class Flipside(WebDriver):
         self.sleep()
         self.driver.find_element_by_xpath(xpath=password_path).send_keys(password)
         login_button_path = (
-            '//*[@id="app-mount"]/div[2]/div/div/div/div/form/div/div/div[1]/div[2]/button[2]'
+            "/html/body/div[1]/div[2]/div/div/div/div/form/div/div/div[1]/div[2]/button[2]"
         )
         self.sleep()
-        return self._login_helper(login_button_path, 2)
+        self._try_click(xpath=login_button_path)
+        return self
+
+    def _try_click(self, xpath: str, constrained: bool = True):
+        # sourcery skip: raise-specific-error
+        try:
+            self.driver.find_element_by_xpath(xpath=xpath).click()
+            self.sleep(3)
+            return True
+        except Exception as e:
+            raise Exception(e) from e
+        return False
 
     def flipside_login(self):  # sourcery skip: raise-specific-error
         self.driver.get("https://flipsidecrypto.xyz/")
         # Sign with discord
-
-        sign_w_disc_path = "/html/body/div/header/div[2]/div/div[2]/form/button"
+        self.sleep(0.5)
+        sign_w_disc_path = "/html/body/div/header/div[3]/div/div[2]/form/button"
         authorize_disc = "/html/body/div[1]/div[2]/div/div/div/div/div/div[2]/button[2]"
-        try:
-            self.driver.find_element_by_xpath(xpath=sign_w_disc_path).click()
-            self.sleep(seconds=3)
-        except Exception as e:
-            raise Exception(e) from e
-        self.sleep(seconds=2)
-        return self._login_helper(authorize_disc, 3)
-
-    def _login_helper(self, xpath, seconds):
-        self.driver.find_element_by_xpath(xpath=xpath).click()
-        self.sleep(seconds=seconds)
+        self._try_click(xpath=sign_w_disc_path)
+        self._try_click(xpath=authorize_disc)
         return self
 
     def capcha(self):
@@ -79,11 +81,11 @@ class Flipside(WebDriver):
         if re.search("[1-9]+ /", body_join, re.IGNORECASE):
             return True
         if re.search("Drops in", body_join, re.IGNORECASE):
-            return self._helper_for_claimable(seconds=0.5)
+            return False
         if re.search("error", body_join, re.IGNORECASE):
-            return self._helper_for_claimable(seconds=0.25)
+            return False
         if re.search("uh oh", body_join, re.IGNORECASE):
-            return self._helper_for_claimable(seconds=0.25)
+            return False
         print("Not claimable...")
         return False
 
@@ -117,7 +119,6 @@ class Flipside(WebDriver):
             body = self.get_body()
             if self.is_claimed(body):
                 return self
-            # claims_index = self._get_index_available_claims(body=body)
             if self.claimable(body=body):
                 self.driver.find_element_by_xpath(claim_path).click()
                 self.sleep(seconds=3.25)
@@ -129,8 +130,7 @@ class Flipside(WebDriver):
             elif persistent:
                 self.refresh(seconds=0.15)
                 self.sleep(seconds=3.15)
-            else:
-                return self
+            self.refresh(0.35)
 
         return self
 
