@@ -15,9 +15,9 @@ if __name__ == "__main__":
     d_password2 = os.getenv("DISCORD_PASSWORD2")
     df = get_data()  # To be implemented, for now only for manual use
     drops = [
+        "https://flipsidecrypto.xyz/drops/3UWZx1KXsymqCE26VbaVQT",
         "https://flipsidecrypto.xyz/drops/62Exh9h0zd8EqFKBzoqyT9"
         "https://flipsidecrypto.xyz/drops/2Dwq6SX0QlJTIhl2m6eMZP",
-        "https://flipsidecrypto.xyz/drops/3UWZx1KXsymqCE26VbaVQT",
     ]
     # idx = 0
     # Example
