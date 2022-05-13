@@ -81,12 +81,14 @@ class Flipside(WebDriver):
         if re.search("[1-9]+ /", body_join, re.IGNORECASE):
             return True
         if re.search("Drops in", body_join, re.IGNORECASE):
-            return False
+            return True
         if re.search("error", body_join, re.IGNORECASE):
-            return False
+            return True
         if re.search("uh oh", body_join, re.IGNORECASE):
+            return True
+        if re.search("No more claims available", body_join, re.IGNORECASE):
+            print("Not claimable...")
             return False
-        print("Not claimable...")
         return False
 
     def _helper_for_claimable(self, **kwargs):
@@ -120,17 +122,23 @@ class Flipside(WebDriver):
             if self.is_claimed(body):
                 return self
             if self.claimable(body=body):
-                self.driver.find_element_by_xpath(claim_path).click()
-                self.sleep(seconds=3.25)
-                body = self.get_body()
-                if self.is_claimed(body):
-                    unclaimed = False
-                    print(f"Successfully Claimed! {url}")
-                    return self
+                try:
+                    self.driver.find_element_by_xpath(claim_path).click()
+                    self.sleep(seconds=3.25)
+                    body = self.get_body()
+                    if self.is_claimed(body):
+                        unclaimed = False
+                        print(f"Successfully Claimed! {url}")
+                        return self
+                except Exception as e:
+                    body = self.get_body()
+                    if not self.claimable(body=body):
+                        print(e)
+                        return self
+                    self.refresh(seconds=0.35)
             elif persistent:
                 self.refresh(seconds=0.15)
                 self.sleep(seconds=3.15)
-            self.refresh(0.35)
 
         return self
 
