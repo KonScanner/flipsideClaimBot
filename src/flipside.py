@@ -112,7 +112,7 @@ class Flipside(WebDriver):
         self.driver.get("https://www.google.gr")
         self.sleep(0.16)
         self.driver.get(url)
-        self.capcha() if self.logged_in is False else None
+        # self.capcha() if self.logged_in is False else None
         self.sleep(seconds=0.2)
         body = self.get_body()
         unclaimed = True
