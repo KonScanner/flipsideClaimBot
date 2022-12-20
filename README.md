@@ -4,6 +4,10 @@ A bot made to claim flipside bounties, for whenever you do not have the time to 
 
 Flipside has made it harder and harder for people to use bots in order to claim the bounties. Now only releasing the actual links when the time comes.
 
+**THIS IS NOW A PUBLIC ARCHIVE**
+
+This project was fun to make (at the time) and helped me in claiming bounties I would have otherwise not been able to, mainly because they would drop at the time I'd be sleeping. At the end of the day it does not really matter who uses this or a version of this, as the end-goal (to get unlimited claims as an `Elite` bounty hunter), is still based on skill and skill itself.
+
 ## How to use
 
 - Create `.env` with your credentials.
